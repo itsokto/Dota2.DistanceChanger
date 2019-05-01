@@ -16,12 +16,12 @@ namespace Dota2.DistanceChanger.Patcher
 
         public void CreateBackup(string source, string destination)
         {
-            CreateBackupAsync(source, destination).RunSynchronously();
+            CreateBackupAsync(source, destination).GetAwaiter().GetResult();
         }
 
         public async Task CreateBackupAsync(string source, string destination)
         {
-            if (File.Exists(source)) await _fileIo.CopyFileAsync(source, destination);
+            if (File.Exists(source)) await _fileIo.CopyFileAsync(source, destination, 81920);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Dota2.DistanceChanger.Models;
 
@@ -5,7 +6,7 @@ namespace Dota2.DistanceChanger.Abstractions
 {
     public interface ISettingsManager
     {
-        Task<Settings> LoadSettings();
+        IObservable<Settings> LoadSettings();
         Task<bool> SaveSettings(Settings settings);
     }
 }

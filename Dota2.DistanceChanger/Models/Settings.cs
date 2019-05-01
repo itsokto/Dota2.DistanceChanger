@@ -1,14 +1,15 @@
-using System.Collections.Generic;
-using Newtonsoft.Json;
+using DynamicData.Binding;
+using PropertyChanged;
 
 namespace Dota2.DistanceChanger.Models
 {
+    [AddINotifyPropertyChangedInterface]
     public class Settings
     {
-        public IList<Client> Clients { get; set; }
+        public ObservableCollectionExtended<Client> Clients { get; set; }
 
         public string Dota2FolderPath { get; set; }
 
-        public IList<byte[]> Patterns { get; set; }
+        public ObservableCollectionExtended<byte[]> Patterns { get; set; }
     }
 }

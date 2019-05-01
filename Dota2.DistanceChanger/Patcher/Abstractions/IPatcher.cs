@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dota2.DistanceChanger.Patcher.Abstractions.Async;
 
 namespace Dota2.DistanceChanger.Patcher.Abstractions
 {

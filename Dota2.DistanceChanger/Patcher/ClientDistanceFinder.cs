@@ -9,7 +9,7 @@ namespace Dota2.DistanceChanger.Patcher
 {
     public class ClientDistanceFinder : IClientDistanceFinder
     {
-        private readonly Regex _regex = new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled);
+        private readonly Regex _regex = new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
         public IDictionary<long, string> Get(byte[] array, IEnumerable<byte[]> patterns)
         {

@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dota2.DistanceChanger", "Dota2.DistanceChanger\Dota2.DistanceChanger.csproj", "{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlatUI", "FlatUI\FlatUI.csproj", "{4EEBB18C-5BC3-4CAF-B39F-8CCD4AE4BA4B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EEBB18C-5BC3-4CAF-B39F-8CCD4AE4BA4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4EEBB18C-5BC3-4CAF-B39F-8CCD4AE4BA4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4EEBB18C-5BC3-4CAF-B39F-8CCD4AE4BA4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4EEBB18C-5BC3-4CAF-B39F-8CCD4AE4BA4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

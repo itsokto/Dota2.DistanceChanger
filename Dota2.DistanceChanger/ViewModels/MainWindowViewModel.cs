@@ -8,24 +8,22 @@ using Dota2.DistanceChanger.Infrastructure;
 using Dota2.DistanceChanger.Models;
 using Dota2.DistanceChanger.Patcher;
 using Dota2.DistanceChanger.Patcher.Abstractions;
-using Microsoft.Win32;
-using Nito.AsyncEx;
 using NLog;
 using PropertyChanged;
+using Reactive.Bindings;
 using ReactiveUI;
+using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace Dota2.DistanceChanger.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    public class MainWindowViewModel : ReactiveObject
+    public class MainWindowViewModel
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly IPatcher _patcher;
         private readonly ISettingsManager _settingsManager;
 
-        private readonly ObservableAsPropertyHelper<Settings> _settingsPropertyHelper;
-
-        private readonly INotifyTaskCompletion<Settings> _settings;
+        //private readonly ObservableAsPropertyHelper<Settings> _settingsPropertyHelper;
 
         public MainWindowViewModel()
         {
@@ -34,50 +32,47 @@ namespace Dota2.DistanceChanger.ViewModels
 
             _settingsManager = new SettingsManager(fileIO)
             {
-                Path = $"{AppDomain.CurrentDomain.BaseDirectory}settings.json"
+                Path = "settings.json"
             };
 
             _patcher = new Patcher.Patcher(fileIO, new ClientDistanceFinder(), new BackupManager(fileIO));
 
-            _settings = NotifyTaskCompletion.Create(async () =>
-            {
-                var setting = await _settingsManager.LoadSettings();
-                if (string.IsNullOrWhiteSpace(setting.Dota2FolderPath))
-                    setting.Dota2FolderPath = GetDotaInstallLocation();
+            Settings = _settingsManager.LoadSettings()
+                .SelectMany(async settings =>
+                {
+                    if (!string.IsNullOrWhiteSpace(settings.Dota2FolderPath))
+                    {
+                        foreach (var client in settings.Clients)
+                        {
+                            var fullPath = settings.Dota2FolderPath + client.LocalPath;
+                            var distance = await _patcher.GetDistanceAsync(fullPath, settings.Patterns);
+                            client.Distance = distance.FirstOrDefault().Value;
+                        }
+                    }
 
-                return setting;
-            });
+                    return settings;
+                }).ToReactiveProperty();
 
-            _settingsPropertyHelper = this.WhenAnyValue(x => x._settings.Result)
-                .Where(x => x != null)
-                .ToProperty(this, x => x.Settings);
 
             var canExecute =
-                this.WhenAnyValue(x => x.Settings.Dota2FolderPath, x => x.Settings.Clients,
-                    (dota, clients) =>
-                        !string.IsNullOrWhiteSpace(dota) && clients.All(x => !string.IsNullOrWhiteSpace(x.LocalPath)));
+                this.WhenAnyValue(x => x.Settings.Value.Dota2FolderPath, x => x.Settings.Value.Clients,
+                        (path, clients) =>
+                            !string.IsNullOrWhiteSpace(path) &&
+                            clients.All(x => !string.IsNullOrWhiteSpace(x.LocalPath)))
+                    .ObserveOn(RxApp.MainThreadScheduler);
 
-            canExecute.DistinctUntilChanged().Subscribe(async x =>
-            {
-                foreach (var client in _settingsPropertyHelper.Value.Clients)
-                {
-                    var fullPath = Settings.Dota2FolderPath + client.LocalPath;
-                    var distance = await _patcher.GetDistanceAsync(fullPath, Settings.Patterns);
-                    client.Distance = distance.FirstOrDefault().Value;
-                }
-            });
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
         }
 
-        public Settings Settings => _settingsPropertyHelper.Value;
+        public ReactiveProperty<Settings> Settings { get; set; }
         public ReactiveCommand<Unit, Unit> PatchCommand { get; }
 
         private async Task CreatePatch()
         {
-            foreach (var client in _settingsPropertyHelper.Value.Clients)
+            foreach (var client in Settings.Value.Clients)
             {
-                var fullPath = Settings.Dota2FolderPath + client.LocalPath;
+                var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
                 if (client.Backup)
                 {
                     _logger?.Debug($"Create backup for {client.DisplayName}.");
@@ -88,22 +83,13 @@ namespace Dota2.DistanceChanger.ViewModels
                 if (client.LastDistance != client.Distance)
                 {
                     _logger?.Debug($"Create patch for {client.DisplayName}, distance {client.Distance}.");
-                    await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Patterns);
+                    await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Value.Patterns);
 
                     client.LastDistance = client.Distance;
                 }
             }
 
-            await _settingsManager.SaveSettings(Settings);
-        }
-
-        public string GetDotaInstallLocation()
-        {
-            var key = Registry.LocalMachine.OpenSubKey(
-                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 570");
-
-            var value = key?.GetValue("InstallLocation");
-            return value?.ToString();
+            await _settingsManager.SaveSettings(Settings.Value);
         }
     }
 }
