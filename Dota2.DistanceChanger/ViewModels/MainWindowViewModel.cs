@@ -8,6 +8,7 @@ using Dota2.DistanceChanger.Infrastructure;
 using Dota2.DistanceChanger.Models;
 using Dota2.DistanceChanger.Patcher;
 using Dota2.DistanceChanger.Patcher.Abstractions;
+using MaterialDesignThemes.Wpf;
 using NLog;
 using PropertyChanged;
 using Reactive.Bindings;
@@ -63,10 +64,15 @@ namespace Dota2.DistanceChanger.ViewModels
 
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
+
+            ToggleDarkModeCommand = ReactiveCommand.Create<bool>(x => new PaletteHelper().SetLightDark(x));
         }
 
         public ReactiveProperty<Settings> Settings { get; set; }
+
         public ReactiveCommand<Unit, Unit> PatchCommand { get; }
+
+        public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
 
         private async Task CreatePatch()
         {
