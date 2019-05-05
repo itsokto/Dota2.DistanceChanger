@@ -88,9 +88,12 @@
                 </Style>
             </Button.Style>
         </Button>
-        
-        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+
+        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                  Style="{StaticResource MaterialDesignCardGroupBox}"
+                  materialDesign:ShadowAssist.ShadowDepth="Depth3"
                   BorderThickness="0"
+                  Padding="16"
                   Header="Clients">
             <ItemsControl ItemsSource="{Binding Settings.Value.Clients}">
                 <ItemsControl.ItemsPanel>
