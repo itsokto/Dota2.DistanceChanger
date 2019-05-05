@@ -1,4 +1,4 @@
-<Window x:Class="Dota2.DistanceChanger.Views.MainWindow"
+﻿<Window x:Class="Dota2.DistanceChanger.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -20,7 +20,7 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFilledTextFieldTextBox}">
             <Setter Property="Margin" Value="5" />
         </Style>
         <Style x:Key="DotaMaterialButton" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedButton}">
@@ -85,27 +85,22 @@
         </Button>
 
 
-        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                   BorderThickness="0"
                   Header="Clients">
-            <ItemsControl 
-                ItemsSource="{Binding Settings.Value.Clients}">
+            <ItemsControl ItemsSource="{Binding Settings.Value.Clients}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"
-                                       VerticalAlignment="Center" />
-                            <TextBox Grid.Column="1"
-                                     Text="{Binding Distance, UpdateSourceTrigger=PropertyChanged}"
-                                     HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
-                            <CheckBox Grid.Column="2"
+                            <TextBox Text="{Binding Distance, UpdateSourceTrigger=PropertyChanged}"
+                                     materialDesign:HintAssist.Hint="{Binding DisplayName}" />
+
+                            <CheckBox Grid.Column="1"
                                       IsChecked="{Binding Backup, UpdateSourceTrigger=PropertyChanged}"
                                       Content="Backup" />
 
@@ -131,10 +126,10 @@
             </Grid.ColumnDefinitions>
 
             <materialDesign:PackIcon Kind="Brightness2" VerticalAlignment="Center"
-                                     Width="auto" Height="25" 
+                                     Width="auto" Height="25"
                                      RenderTransformOrigin="0.5 0.5">
                 <materialDesign:PackIcon.RenderTransform>
-                    <ScaleTransform ScaleX="-1"></ScaleTransform>
+                    <ScaleTransform ScaleX="-1" />
                 </materialDesign:PackIcon.RenderTransform>
             </materialDesign:PackIcon>
 
