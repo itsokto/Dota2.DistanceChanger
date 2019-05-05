@@ -23,7 +23,7 @@ namespace Dota2.DistanceChanger.ViewModels
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly IPatcher _patcher;
-        private readonly ISettingsManager _settingsManager;
+        private readonly ISettingsManager<Settings> _settingsManager;
 
         public MainWindowViewModel()
         {

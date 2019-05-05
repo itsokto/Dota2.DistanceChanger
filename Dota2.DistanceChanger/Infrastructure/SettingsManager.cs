@@ -13,7 +13,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Dota2.DistanceChanger.Infrastructure
 {
-    public class SettingsManager : ISettingsManager
+    public class SettingsManager : ISettingsManager<Settings>
     {
         private readonly IFileIO _fileIo;
 
