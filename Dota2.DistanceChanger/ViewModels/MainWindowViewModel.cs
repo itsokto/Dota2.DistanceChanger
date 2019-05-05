@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -23,8 +24,6 @@ namespace Dota2.DistanceChanger.ViewModels
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly IPatcher _patcher;
         private readonly ISettingsManager _settingsManager;
-
-        //private readonly ObservableAsPropertyHelper<Settings> _settingsPropertyHelper;
 
         public MainWindowViewModel()
         {
@@ -54,14 +53,12 @@ namespace Dota2.DistanceChanger.ViewModels
                     return settings;
                 }).ToReactiveProperty();
 
-
             var canExecute =
                 this.WhenAnyValue(x => x.Settings.Value.Dota2FolderPath, x => x.Settings.Value.Clients,
                         (path, clients) =>
                             !string.IsNullOrWhiteSpace(path) &&
                             clients.All(x => !string.IsNullOrWhiteSpace(x.LocalPath)))
                     .ObserveOn(RxApp.MainThreadScheduler);
-
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
 
@@ -76,24 +73,33 @@ namespace Dota2.DistanceChanger.ViewModels
 
         private async Task CreatePatch()
         {
+            var tasks = new List<Task>();
+
             foreach (var client in Settings.Value.Clients)
             {
-                var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
-                if (client.Backup)
+                var task = Task.Run(async () =>
                 {
-                    _logger?.Debug($"Create backup for {client.DisplayName}.");
-                    await _patcher.CreateBackupAsync(fullPath,
-                        $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
-                }
+                    var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
+                    if (client.Backup)
+                    {
+                        _logger?.Debug($"Backing up {client.DisplayName}.");
+                        await _patcher.CreateBackupAsync(fullPath,
+                            $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+                    }
 
-                if (client.LastDistance != client.Distance)
-                {
-                    _logger?.Debug($"Create patch for {client.DisplayName}, distance {client.Distance}.");
-                    await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Value.Patterns);
+                    if (client.LastDistance != client.Distance)
+                    {
+                        _logger?.Debug($"Patching {client.DisplayName}, distance {client.Distance}.");
+                        await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Value.Patterns);
 
-                    client.LastDistance = client.Distance;
-                }
+                        client.LastDistance = client.Distance;
+                    }
+                });
+
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
 
             await _settingsManager.SaveSettings(Settings.Value);
         }
