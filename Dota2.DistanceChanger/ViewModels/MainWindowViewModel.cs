@@ -80,7 +80,7 @@ namespace Dota2.DistanceChanger.ViewModels
                 var task = Task.Run(async () =>
                 {
                     var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
-                    if (client.Backup)
+                    if (Settings.Value.Backup)
                     {
                         _logger?.Debug($"Backing up {client.DisplayName}.");
                         await _patcher.CreateBackupAsync(fullPath,

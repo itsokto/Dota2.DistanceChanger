@@ -69,13 +69,11 @@ namespace Dota2.DistanceChanger.Infrastructure
             {
                 new Client
                 {
-                    Backup = true,
                     DisplayName = "X32 Client",
                     LocalPath = @"\game\dota\bin\win32\client.dll"
                 },
                 new Client
                 {
-                    Backup = true,
                     DisplayName = "X64 Client",
                     LocalPath = @"\game\dota\bin\win64\client.dll"
                 }
@@ -104,6 +102,7 @@ namespace Dota2.DistanceChanger.Infrastructure
 
             var settingsObj = new Settings
             {
+                Backup = true,
                 Clients = clients,
                 Patterns = patterns
             };
