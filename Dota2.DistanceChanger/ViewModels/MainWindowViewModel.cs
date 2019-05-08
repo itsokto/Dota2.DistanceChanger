@@ -69,6 +69,11 @@ namespace Dota2.DistanceChanger.ViewModels
                 Settings.Value.DarkMode = x;
                 await _settingsManager.SaveSettings(Settings.Value);
             });
+
+            Settings.Where(settings => settings != null)
+                .Take(1)
+                .Select(settings => settings.DarkMode)
+                .InvokeCommand(ToggleDarkModeCommand);
         }
 
         public ReactiveProperty<Settings> Settings { get; set; }
