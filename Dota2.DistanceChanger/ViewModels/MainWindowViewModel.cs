@@ -47,6 +47,7 @@ namespace Dota2.DistanceChanger.ViewModels
                             var fullPath = settings.Dota2FolderPath + client.LocalPath;
                             var distance = await _patcher.GetDistanceAsync(fullPath, settings.Patterns);
                             client.Distance = distance.FirstOrDefault().Value;
+                            client.CurrentDistance = client.Distance;
                         }
                     }
 
@@ -92,12 +93,12 @@ namespace Dota2.DistanceChanger.ViewModels
                             $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
                     }
 
-                    if (client.LastDistance != client.Distance)
+                    if (client.CurrentDistance != client.Distance)
                     {
                         _logger?.Debug($"Patching {client.DisplayName}, distance {client.Distance}.");
                         await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Value.Patterns);
 
-                        client.LastDistance = client.Distance;
+                        client.CurrentDistance = client.Distance;
                     }
                 });
 
