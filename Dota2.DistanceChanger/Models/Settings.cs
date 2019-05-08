@@ -10,6 +10,8 @@ namespace Dota2.DistanceChanger.Models
 
         public ObservableCollectionExtended<Client> Clients { get; set; }
 
+        public bool DarkMode { get; set; }
+
         public string Dota2FolderPath { get; set; }
 
         public ObservableCollectionExtended<byte[]> Patterns { get; set; }

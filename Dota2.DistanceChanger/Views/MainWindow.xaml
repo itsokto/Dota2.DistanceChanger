@@ -146,7 +146,7 @@
                 <TextBlock Grid.Column="2" Text="Dark mode" VerticalAlignment="Center" />
 
                 <ToggleButton Grid.Column="4"
-                              IsChecked="True"
+                              IsChecked="{Binding Settings.Value.DarkMode}"
                               Command="{Binding ToggleDarkModeCommand}"
                               CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
             </Grid>

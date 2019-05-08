@@ -104,6 +104,7 @@ namespace Dota2.DistanceChanger.Infrastructure
             {
                 Backup = true,
                 Clients = clients,
+                DarkMode = true,
                 Patterns = patterns
             };
 

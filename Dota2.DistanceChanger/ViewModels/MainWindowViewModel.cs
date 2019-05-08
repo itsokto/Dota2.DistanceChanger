@@ -62,7 +62,12 @@ namespace Dota2.DistanceChanger.ViewModels
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
 
-            ToggleDarkModeCommand = ReactiveCommand.Create<bool>(x => new PaletteHelper().SetLightDark(x));
+            ToggleDarkModeCommand = ReactiveCommand.CreateFromTask<bool>(async x =>
+            {
+                new PaletteHelper().SetLightDark(x);
+                Settings.Value.DarkMode = x;
+                await _settingsManager.SaveSettings(Settings.Value);
+            });
         }
 
         public ReactiveProperty<Settings> Settings { get; set; }
