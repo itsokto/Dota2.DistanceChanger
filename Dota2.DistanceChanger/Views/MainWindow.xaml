@@ -59,7 +59,9 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.ColumnSpan="2"
+        <materialDesign:Snackbar Grid.ColumnSpan="3" Grid.RowSpan="7" MessageQueue="{Binding SnackbarMessageQueue}" />
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                    FontSize="24"
                    Text="Путь до dota 2 beta:"
                    TextWrapping="Wrap" />
@@ -89,7 +91,7 @@
             </Button.Style>
         </Button>
 
-        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+        <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                   Style="{StaticResource MaterialDesignCardGroupBox}"
                   materialDesign:ShadowAssist.ShadowDepth="Depth3"
                   BorderThickness="0"

@@ -29,6 +29,7 @@ namespace Dota2.DistanceChanger.ViewModels
         {
             // ReSharper disable once InconsistentNaming
             var fileIO = new FileIO();
+            SnackbarMessageQueue = new SnackbarMessageQueue();
 
             _settingsManager = new SettingsManager(fileIO)
             {
@@ -41,7 +42,6 @@ namespace Dota2.DistanceChanger.ViewModels
                 .SelectMany(async settings =>
                 {
                     if (!string.IsNullOrWhiteSpace(settings.Dota2FolderPath))
-                    {
                         foreach (var client in settings.Clients)
                         {
                             var fullPath = settings.Dota2FolderPath + client.LocalPath;
@@ -49,7 +49,6 @@ namespace Dota2.DistanceChanger.ViewModels
                             client.Distance = distance.FirstOrDefault().Value;
                             client.CurrentDistance = client.Distance;
                         }
-                    }
 
                     return settings;
                 }).ToReactiveProperty();
@@ -62,6 +61,12 @@ namespace Dota2.DistanceChanger.ViewModels
                     .ObserveOn(RxApp.MainThreadScheduler);
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
+
+            PatchCommand.Subscribe(async unit =>
+            {
+                await _settingsManager.SaveSettings(Settings.Value);
+                SnackbarMessageQueue.Enqueue("Done!");
+            });
 
             ToggleDarkModeCommand = ReactiveCommand.CreateFromTask<bool>(async x =>
             {
@@ -81,6 +86,8 @@ namespace Dota2.DistanceChanger.ViewModels
         public ReactiveCommand<Unit, Unit> PatchCommand { get; }
 
         public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
+
+        public ISnackbarMessageQueue SnackbarMessageQueue { get; }
 
         private async Task CreatePatch()
         {
@@ -111,8 +118,6 @@ namespace Dota2.DistanceChanger.ViewModels
             }
 
             await Task.WhenAll(tasks);
-
-            await _settingsManager.SaveSettings(Settings.Value);
         }
     }
 }
