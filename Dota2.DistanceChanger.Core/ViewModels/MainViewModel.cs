@@ -4,39 +4,38 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Dota2.DistanceChanger.Abstractions;
-using Dota2.DistanceChanger.Infrastructure;
-using Dota2.DistanceChanger.Models;
-using Dota2.DistanceChanger.Patcher;
-using Dota2.DistanceChanger.Patcher.Abstractions;
+using Dota.Patcher.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Models;
 using MaterialDesignThemes.Wpf;
-using NLog;
+using Microsoft.Extensions.Logging;
+using MvvmCross.ViewModels;
 using PropertyChanged;
 using Reactive.Bindings;
 using ReactiveUI;
 using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
-namespace Dota2.DistanceChanger.ViewModels
+namespace Dota2.DistanceChanger.Core.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    public class MainWindowViewModel
+    public class MainViewModel : MvxViewModel
     {
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        private readonly IPatcher _patcher;
+        private readonly IBackupManager _backupManager;
+        private readonly IDistancePatcher _distancePatcher;
+        private readonly ILogger<MainViewModel> _logger;
         private readonly ISettingsManager<Settings> _settingsManager;
 
-        public MainWindowViewModel()
+        public MainViewModel(ILogger<MainViewModel> logger,
+            ISnackbarMessageQueue snackbarMessageQueue,
+            IDistancePatcher distancePatcher,
+            ISettingsManager<Settings> settingsManager,
+            IBackupManager backupManager)
         {
-            // ReSharper disable once InconsistentNaming
-            var fileIO = new FileIO();
-            SnackbarMessageQueue = new SnackbarMessageQueue();
-
-            _settingsManager = new SettingsManager(fileIO)
-            {
-                Path = "settings.json"
-            };
-
-            _patcher = new Patcher.Patcher(fileIO, new ClientDistanceFinder(), new BackupManager(fileIO));
+            _logger = logger;
+            _distancePatcher = distancePatcher;
+            SnackbarMessageQueue = snackbarMessageQueue;
+            _settingsManager = settingsManager;
+            _backupManager = backupManager;
 
             Settings = _settingsManager.LoadSettings()
                 .SelectMany(async settings =>
@@ -45,7 +44,7 @@ namespace Dota2.DistanceChanger.ViewModels
                         foreach (var client in settings.Clients)
                         {
                             var fullPath = settings.Dota2FolderPath + client.LocalPath;
-                            var distance = await _patcher.GetDistanceAsync(fullPath, settings.Patterns);
+                            var distance = await _distancePatcher.GetAsync(fullPath, settings.Patterns);
                             client.Distance = distance.FirstOrDefault().Value;
                             client.CurrentDistance = client.Distance;
                         }
@@ -71,7 +70,6 @@ namespace Dota2.DistanceChanger.ViewModels
             ToggleDarkModeCommand = ReactiveCommand.CreateFromTask<bool>(async x =>
             {
                 new PaletteHelper().SetLightDark(x);
-                Settings.Value.DarkMode = x;
                 await _settingsManager.SaveSettings(Settings.Value);
             });
 
@@ -100,15 +98,15 @@ namespace Dota2.DistanceChanger.ViewModels
                     var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
                     if (Settings.Value.Backup)
                     {
-                        _logger?.Debug($"Backing up {client.DisplayName}.");
-                        await _patcher.CreateBackupAsync(fullPath,
+                        _logger?.LogInformation($"Backing up {client.DisplayName}.");
+                        await _backupManager.CreateBackupAsync(fullPath,
                             $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
                     }
 
                     if (client.CurrentDistance != client.Distance)
                     {
-                        _logger?.Debug($"Patching {client.DisplayName}, distance {client.Distance}.");
-                        await _patcher.SetDistanceAsync(fullPath, client.Distance, Settings.Value.Patterns);
+                        _logger?.LogInformation($"Patching {client.DisplayName}, distance {client.Distance}.");
+                        await _distancePatcher.SetAsync(fullPath, client.Distance, Settings.Value.Patterns);
 
                         client.CurrentDistance = client.Distance;
                     }

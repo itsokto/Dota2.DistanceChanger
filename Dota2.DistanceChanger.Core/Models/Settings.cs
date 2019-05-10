@@ -1,7 +1,7 @@
 using DynamicData.Binding;
 using PropertyChanged;
 
-namespace Dota2.DistanceChanger.Models
+namespace Dota2.DistanceChanger.Core.Models
 {
     [AddINotifyPropertyChangedInterface]
     public class Settings

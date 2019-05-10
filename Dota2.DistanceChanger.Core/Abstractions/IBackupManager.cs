@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Dota2.DistanceChanger.Patcher.Abstractions.Async
+namespace Dota2.DistanceChanger.Core.Abstractions
 {
-    public interface IBackupManagerAsync
+    public interface IBackupManager
     {
         Task CreateBackupAsync(string source, string destination);
     }

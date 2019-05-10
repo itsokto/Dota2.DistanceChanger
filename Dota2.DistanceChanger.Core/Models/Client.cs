@@ -1,4 +1,4 @@
-namespace Dota2.DistanceChanger.Models
+namespace Dota2.DistanceChanger.Core.Models
 {
     public class Client
     {

@@ -3,19 +3,20 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using Dota2.DistanceChanger.Abstractions;
-using Dota2.DistanceChanger.Models;
-using Dota2.DistanceChanger.Patcher.Abstractions.Async;
+using Async.IO;
+using Async.IO.Abstractions;
+using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Models;
 using DynamicData.Binding;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Dota2.DistanceChanger.Infrastructure
+namespace Dota2.DistanceChanger.Core.Infrastructure
 {
     public class SettingsManager : ISettingsManager<Settings>
     {
-        private readonly IFileIO _fileIo;
+        private readonly IAsyncFile _asyncFile;
 
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -26,17 +27,17 @@ namespace Dota2.DistanceChanger.Infrastructure
             Formatting = Formatting.Indented
         };
 
-        public SettingsManager(IFileIO fileIo)
+        public SettingsManager(IAsyncFile asyncFile)
         {
-            _fileIo = fileIo;
+            _asyncFile = asyncFile;
         }
 
-        public string Path { get; internal set; }
+        public string FilePath { get; internal set; } = "settings.json";
 
         public IObservable<Settings> LoadSettings()
         {
-            return File.Exists(Path)
-                ? _fileIo.ReadAsStringAsync(Path)
+            return File.Exists(FilePath)
+                ? _asyncFile.ReadAsStringAsync(FilePath)
                     .ToObservable()
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .SelectMany(async result =>
@@ -44,9 +45,7 @@ namespace Dota2.DistanceChanger.Infrastructure
                         if (TryDeserializeObject<Settings>(result, out var settings))
                         {
                             if (string.IsNullOrWhiteSpace(settings.Dota2FolderPath))
-                            {
                                 settings.Dota2FolderPath = GetDotaInstallLocation();
-                            }
 
                             return settings;
                         }
@@ -59,7 +58,7 @@ namespace Dota2.DistanceChanger.Infrastructure
         public async Task<bool> SaveSettings(Settings settings)
         {
             var result = JsonConvert.SerializeObject(settings, _jsonSerializerSettings);
-            await _fileIo.WriteStringAsync(Path, result);
+            await _asyncFile.WriteStringAsync(FilePath, result);
             return true;
         }
 
@@ -109,7 +108,7 @@ namespace Dota2.DistanceChanger.Infrastructure
             };
 
             var resultStr = JsonConvert.SerializeObject(settingsObj, _jsonSerializerSettings);
-            await _fileIo.WriteStringAsync(Path, resultStr);
+            await _asyncFile.WriteStringAsync(FilePath, resultStr);
             return settingsObj;
         }
 

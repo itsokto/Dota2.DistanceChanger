@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Dota2.DistanceChanger.Patcher.Abstractions;
+using Dota.Patcher.Core.Abstractions;
+using Dota.Patcher.Core.Models;
 
-namespace Dota2.DistanceChanger.Patcher
+namespace Dota.Patcher.Core
 {
     public class ClientDistanceFinder : IClientDistanceFinder
     {
-        private readonly Regex _regex = new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled | RegexOptions.RightToLeft);
+        private readonly Regex _regex =
+            new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
-        public IDictionary<long, string> Get(byte[] array, IEnumerable<byte[]> patterns)
+        public IEnumerable<SearchResult<string>> Find(byte[] array, IEnumerable<byte[]> patterns)
         {
-            var dictionary = new Dictionary<long, string>();
             foreach (var pattern in patterns)
             {
                 var index = IndexOf(array, pattern);
@@ -25,39 +26,42 @@ namespace Dota2.DistanceChanger.Patcher
                     if (!result) continue;
 
                     var realOffset = index + offset - 12;
-                    if (!dictionary.ContainsKey(realOffset))
-                        dictionary.Add(realOffset, distance);
+
+                    yield return new SearchResult<string>
+                    {
+                        Offset = realOffset,
+                        Value = distance
+                    };
                 }
             }
-
-            return dictionary;
         }
 
-        public IDictionary<long, string> Get(byte[] array, byte[] pattern)
+        public IEnumerable<SearchResult<string>> Find(byte[] array, byte[] pattern)
         {
-            return Get(array, new[] {pattern});
+            return Find(array, new[] {pattern});
         }
 
-        public IDictionary<long, string> Get(byte[] array, IEnumerable<long> offsets)
+        public IEnumerable<SearchResult<string>> Find(byte[] array, IEnumerable<int> offsets)
         {
-            var dictionary = new Dictionary<long, string>();
             foreach (var offset in offsets)
             {
                 var (result, _, distance) = GetDistanceFromBytesInRange(array, offset, 4);
                 if (!result) continue;
-                if (!dictionary.ContainsKey(offset))
-                    dictionary.Add(offset, distance);
+
+                yield return new SearchResult<string>
+                {
+                    Offset = offset,
+                    Value = distance
+                };
             }
-
-            return dictionary;
         }
 
-        public string Get(byte[] array, long offset)
+        public string Find(byte[] array, int offset)
         {
-            return Get(array, new[] {offset}).Values.FirstOrDefault();
+            return Find(array, new[] {offset}).FirstOrDefault()?.Value;
         }
 
-        private static long IndexOf(byte[] value, byte[] pattern)
+        private static int IndexOf(byte[] value, byte[] pattern)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -65,25 +69,25 @@ namespace Dota2.DistanceChanger.Patcher
             if (pattern == null)
                 throw new ArgumentNullException(nameof(pattern));
 
-            var valueLength = value.LongLength;
-            var patternLength = pattern.LongLength;
+            var valueLength = value.Length;
+            var patternLength = pattern.Length;
 
             if (valueLength == 0 || patternLength == 0 || patternLength > valueLength)
                 return -1;
 
-            var badCharacters = new long[256];
+            var badCharacters = new int[256];
 
-            for (long i = 0; i < 256; ++i)
+            for (var i = 0; i < 256; ++i)
                 badCharacters[i] = patternLength;
 
             var lastPatternByte = patternLength - 1;
 
-            for (long i = 0; i < lastPatternByte; ++i)
+            for (var i = 0; i < lastPatternByte; ++i)
                 badCharacters[pattern[i]] = lastPatternByte - i;
 
             // Beginning
 
-            long index = 0;
+            var index = 0;
 
             while (index <= valueLength - patternLength)
             {
@@ -97,16 +101,13 @@ namespace Dota2.DistanceChanger.Patcher
             return -1;
         }
 
-        private static byte[] GetBytesFromArray(byte[] array, long offset, long count)
+        private static byte[] GetBytesFromArray(IEnumerable<byte> array, int offset, int count)
         {
-            var buffer = new byte[count];
-            for (var i = 0; i < count; i++) buffer[i] = array[offset + i];
-
-            return buffer;
+            return array.Skip(offset).Take(count).ToArray();
         }
 
-        private (bool result, long offsetInRange, string distance) GetDistanceFromBytesInRange(byte[] array,
-            long offset, long count)
+        private (bool result, int offsetInRange, string distance) GetDistanceFromBytesInRange(IEnumerable<byte> array,
+            int offset, int count)
         {
             var originEncodedString = GetBytesFromArray(array, offset, count);
             var decodedString = Encoding.Default.GetString(originEncodedString);

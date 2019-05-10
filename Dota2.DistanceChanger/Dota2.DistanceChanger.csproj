@@ -71,10 +71,7 @@
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="4.0.0" />
     <PackageReference Include="MaterialDesignThemes" Version="2.6.0-ci1366" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="NLog" Version="4.6.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.0.0" />
-    <PackageReference Include="ReactiveProperty" Version="5.4.0" />
+    <PackageReference Include="MvvmCross.Platforms.Wpf" Version="6.2.3" />
     <PackageReference Include="ReactiveUI.WPF" Version="9.14.1" />
   </ItemGroup>
   <ItemGroup>
@@ -82,30 +79,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Abstractions\ISettingsManager.cs" />
-    <Compile Include="Infrastructure\SettingsManager.cs" />
-    <Compile Include="Models\Client.cs" />
-    <Compile Include="Models\Settings.cs" />
-    <Compile Include="Patcher\Abstractions\Async\IBackupManagerAsync.cs" />
-    <Compile Include="Patcher\Abstractions\Async\IFileIO.cs" />
-    <Compile Include="Patcher\Abstractions\IPatcher.cs" />
-    <Compile Include="Patcher\BackupManager.cs" />
-    <Compile Include="Patcher\ClientDistanceFinder.cs" />
-    <Compile Include="Patcher\Abstractions\IBackupManager.cs" />
-    <Compile Include="Patcher\Abstractions\IClientDistanceFinder.cs" />
-    <Compile Include="Patcher\FileIO.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patcher\Patcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -119,18 +105,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <Page Include="Views\MainView.xaml" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\Dota2.DistanceChanger.Core\Dota2.DistanceChanger.Core.csproj">
+      <Project>{49f32d42-3f60-4bdd-b593-4eb98c64926a}</Project>
+      <Name>Dota2.DistanceChanger.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,9 +1,13 @@
-﻿namespace Dota2.DistanceChanger
+﻿using MvvmCross.Core;
+using MvvmCross.Platforms.Wpf.Core;
+
+namespace Dota2.DistanceChanger
 {
-    /// <summary>
-    ///     Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App
     {
+        protected override void RegisterSetup()
+        {
+            this.RegisterSetupType<MvxWpfSetup<Core.App>>();
+        }
     }
 }

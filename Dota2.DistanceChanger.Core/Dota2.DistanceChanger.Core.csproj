@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MaterialDesignThemes" Version="2.5.1" />
+      <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
+      <PackageReference Include="MvvmCross" Version="6.2.3" />
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+      <PackageReference Include="PropertyChanged.Fody" Version="3.0.0" />
+      <PackageReference Include="ReactiveProperty" Version="5.4.0" />
+      <PackageReference Include="ReactiveUI" Version="9.14.1" />
+      <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00032" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\async-file\async-file.csproj" />
+      <ProjectReference Include="..\dota-patcher-core\dota-patcher-core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="FodyWeavers.xml" />
+    </ItemGroup>
+
+</Project>
