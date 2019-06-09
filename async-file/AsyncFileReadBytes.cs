@@ -34,7 +34,8 @@ namespace Async.IO
         public async Task<byte[]> ReadBytesAsync(string path, long offset, long count,
             CancellationToken cancellationToken)
         {
-            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, FileOptions))
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize,
+                FileOptions))
             {
                 count = count == 0 ? stream.Length : count;
 

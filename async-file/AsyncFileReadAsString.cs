@@ -13,7 +13,8 @@ namespace Async.IO
 
         public async Task<string> ReadAsStringAsync(string path, CancellationToken cancellationToken)
         {
-            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, FileOptions))
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize,
+                FileOptions))
             using (var reader = new StreamReader(stream))
             {
                 var result = await reader.ReadToEndAsync()

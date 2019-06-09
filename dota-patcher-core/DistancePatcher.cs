@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Async.IO;
 using Async.IO.Abstractions;
 using Dota.Patcher.Core.Abstractions;
 using Dota.Patcher.Core.Models;
@@ -14,7 +13,6 @@ namespace Dota.Patcher.Core
         private readonly IAsyncFile _asyncFile;
         private readonly IClientDistanceFinder _clientDistanceFinder;
 
-        // ReSharper disable once InconsistentNaming
         public DistancePatcher(IAsyncFile asyncFile, IClientDistanceFinder clientDistanceFinder)
         {
             _asyncFile = asyncFile;

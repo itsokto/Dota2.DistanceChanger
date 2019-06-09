@@ -23,7 +23,8 @@ namespace Async.IO
 
         public async Task WriteBytesAsync(string path, byte[] bytes, long offset, CancellationToken cancellationToken)
         {
-            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.Write,  BufferSize, FileOptions))
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.Write, BufferSize,
+                FileOptions))
             {
                 stream.Position = offset;
                 await stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken)

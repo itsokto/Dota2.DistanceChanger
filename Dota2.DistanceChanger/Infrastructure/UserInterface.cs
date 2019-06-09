@@ -1,3 +1,4 @@
+using System;
 using Dota2.DistanceChanger.Core.Abstractions;
 using MaterialDesignThemes.Wpf;
 
@@ -14,7 +15,7 @@ namespace Dota2.DistanceChanger.Infrastructure
 
         public void SetPrimaryColor(string color)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

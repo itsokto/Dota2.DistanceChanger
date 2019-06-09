@@ -24,9 +24,9 @@ namespace Dota2.DistanceChanger.Core.ViewModels
         private readonly IBackupManager _backupManager;
         private readonly IDistancePatcher _distancePatcher;
         private readonly ILogger<MainViewModel> _logger;
+        private readonly ISettingsManager<Settings> _settingsManager;
         private readonly IUserDialogs _userDialogs;
         private readonly IUserInterface _userInterface;
-        private readonly ISettingsManager<Settings> _settingsManager;
 
         public MainViewModel(ILogger<MainViewModel> logger,
             IUserDialogs userDialogs,
@@ -46,7 +46,6 @@ namespace Dota2.DistanceChanger.Core.ViewModels
                 .SelectMany(async x =>
                 {
                     if (!string.IsNullOrWhiteSpace(x.Dota2FolderPath))
-                    {
                         await x.Clients.ForEachAsync(async client =>
                         {
                             var fullPath = x.Dota2FolderPath + client.LocalPath;
@@ -54,7 +53,6 @@ namespace Dota2.DistanceChanger.Core.ViewModels
                             client.Distance = distance.FirstOrDefault().Value;
                             client.CurrentDistance = client.Distance;
                         });
-                    }
 
                     //TODO: handle case when Dota2FolderPath not found
 
@@ -84,6 +82,12 @@ namespace Dota2.DistanceChanger.Core.ViewModels
                 .Subscribe(settings => { settings.PropertyChanged += SettingsOnPropertyChanged; });
         }
 
+        public ReactiveProperty<Settings> Settings { get; set; }
+
+        public ReactiveCommand<Unit, Unit> PatchCommand { get; }
+
+        public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
+
         private void ToggleDarkMode(bool enable)
         {
             _userInterface.DarkMode(enable);
@@ -93,12 +97,6 @@ namespace Dota2.DistanceChanger.Core.ViewModels
         {
             _settingsManager.SaveSettings(Settings.Value).GetAwaiter().GetResult();
         }
-
-        public ReactiveProperty<Settings> Settings { get; set; }
-
-        public ReactiveCommand<Unit, Unit> PatchCommand { get; }
-
-        public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
 
         private Task CreatePatch()
         {
