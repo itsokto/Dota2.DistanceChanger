@@ -1,10 +1,9 @@
+using System.ComponentModel;
 using DynamicData.Binding;
-using PropertyChanged;
 
 namespace Dota2.DistanceChanger.Core.Models
 {
-    [AddINotifyPropertyChangedInterface]
-    public class Settings
+    public class Settings : INotifyPropertyChanged
     {
         public bool Backup { get; set; }
 
@@ -15,5 +14,7 @@ namespace Dota2.DistanceChanger.Core.Models
         public string Dota2FolderPath { get; set; }
 
         public ObservableCollectionExtended<byte[]> Patterns { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

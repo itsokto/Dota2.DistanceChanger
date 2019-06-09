@@ -1,5 +1,4 @@
 ﻿using MvvmCross.Core;
-using MvvmCross.Platforms.Wpf.Core;
 
 namespace Dota2.DistanceChanger
 {
@@ -7,7 +6,7 @@ namespace Dota2.DistanceChanger
     {
         protected override void RegisterSetup()
         {
-            this.RegisterSetupType<MvxWpfSetup<Core.App>>();
+            this.RegisterSetupType<AppSetup>();
         }
     }
 }

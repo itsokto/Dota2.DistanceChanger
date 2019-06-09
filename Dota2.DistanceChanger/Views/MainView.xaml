@@ -5,7 +5,9 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
                   xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                  mc:Ignorable="d">
+                  xmlns:viewModels="clr-namespace:Dota2.DistanceChanger.Core.ViewModels;assembly=Dota2.DistanceChanger.Core"
+                  xmlns:infrastructure="clr-namespace:Dota2.DistanceChanger.Infrastructure"
+                  mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainViewModel }">
     <views:MvxWpfView.Resources>
         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFilledTextFieldTextBox}">
             <Setter Property="Margin" Value="5" />
@@ -37,7 +39,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <materialDesign:Snackbar Grid.ColumnSpan="3" Grid.RowSpan="7" MessageQueue="{Binding SnackbarMessageQueue}" />
+        <materialDesign:Snackbar Grid.ColumnSpan="3" Grid.RowSpan="7" MessageQueue="{infrastructure:UserDialog}" />
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>

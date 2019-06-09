@@ -1,17 +1,18 @@
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Dota.Patcher.Core.Abstractions;
 using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Extensions;
 using Dota2.DistanceChanger.Core.Models;
-using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using PropertyChanged;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using ReactiveUI;
 using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
@@ -23,60 +24,74 @@ namespace Dota2.DistanceChanger.Core.ViewModels
         private readonly IBackupManager _backupManager;
         private readonly IDistancePatcher _distancePatcher;
         private readonly ILogger<MainViewModel> _logger;
+        private readonly IUserDialogs _userDialogs;
+        private readonly IUserInterface _userInterface;
         private readonly ISettingsManager<Settings> _settingsManager;
 
         public MainViewModel(ILogger<MainViewModel> logger,
-            ISnackbarMessageQueue snackbarMessageQueue,
+            IUserDialogs userDialogs,
+            IUserInterface userInterface,
             IDistancePatcher distancePatcher,
             ISettingsManager<Settings> settingsManager,
             IBackupManager backupManager)
         {
             _logger = logger;
+            _userDialogs = userDialogs;
+            _userInterface = userInterface;
             _distancePatcher = distancePatcher;
-            SnackbarMessageQueue = snackbarMessageQueue;
             _settingsManager = settingsManager;
             _backupManager = backupManager;
 
             Settings = _settingsManager.LoadSettings()
-                .SelectMany(async settings =>
+                .SelectMany(async x =>
                 {
-                    if (!string.IsNullOrWhiteSpace(settings.Dota2FolderPath))
-                        foreach (var client in settings.Clients)
+                    if (!string.IsNullOrWhiteSpace(x.Dota2FolderPath))
+                    {
+                        await x.Clients.ForEachAsync(async client =>
                         {
-                            var fullPath = settings.Dota2FolderPath + client.LocalPath;
-                            var distance = await _distancePatcher.GetAsync(fullPath, settings.Patterns);
+                            var fullPath = x.Dota2FolderPath + client.LocalPath;
+                            var distance = await _distancePatcher.GetAsync(fullPath, x.Patterns);
                             client.Distance = distance.FirstOrDefault().Value;
                             client.CurrentDistance = client.Distance;
-                        }
+                        });
+                    }
 
-                    return settings;
+                    //TODO: handle case when Dota2FolderPath not found
+
+                    return x;
                 }).ToReactiveProperty();
 
             var canExecute =
                 this.WhenAnyValue(x => x.Settings.Value.Dota2FolderPath, x => x.Settings.Value.Clients,
                         (path, clients) =>
-                            !string.IsNullOrWhiteSpace(path) &&
-                            clients.All(x => !string.IsNullOrWhiteSpace(x.LocalPath)))
-                    .ObserveOn(RxApp.MainThreadScheduler);
+                            !string.IsNullOrWhiteSpace(path)
+                            && clients != null
+                            && clients.All(x => !string.IsNullOrWhiteSpace(x.LocalPath)))
+                    .ObserveOnUIDispatcher();
 
             PatchCommand = ReactiveCommand.CreateFromTask(CreatePatch, canExecute);
 
-            PatchCommand.Subscribe(async unit =>
-            {
-                await _settingsManager.SaveSettings(Settings.Value);
-                SnackbarMessageQueue.Enqueue("Done!");
-            });
+            PatchCommand.SubscribeOnUIDispatcher().Subscribe(_ => { _userDialogs.Alert("Done!"); });
 
-            ToggleDarkModeCommand = ReactiveCommand.CreateFromTask<bool>(async x =>
-            {
-                new PaletteHelper().SetLightDark(x);
-                await _settingsManager.SaveSettings(Settings.Value);
-            });
+            ToggleDarkModeCommand = ReactiveCommand.Create<bool>(ToggleDarkMode);
 
             Settings.Where(settings => settings != null)
-                .Take(1)
                 .Select(settings => settings.DarkMode)
+                .ObserveOnUIDispatcher()
                 .InvokeCommand(ToggleDarkModeCommand);
+
+            Settings.Where(settings => settings != null)
+                .Subscribe(settings => { settings.PropertyChanged += SettingsOnPropertyChanged; });
+        }
+
+        private void ToggleDarkMode(bool enable)
+        {
+            _userInterface.DarkMode(enable);
+        }
+
+        private void SettingsOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            _settingsManager.SaveSettings(Settings.Value).GetAwaiter().GetResult();
         }
 
         public ReactiveProperty<Settings> Settings { get; set; }
@@ -85,37 +100,26 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
         public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
 
-        public ISnackbarMessageQueue SnackbarMessageQueue { get; }
-
-        private async Task CreatePatch()
+        private Task CreatePatch()
         {
-            var tasks = new List<Task>();
-
-            foreach (var client in Settings.Value.Clients)
+            return Settings.Value.Clients.ForEachAsync(async client =>
             {
-                var task = Task.Run(async () =>
+                var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
+                if (Settings.Value.Backup)
                 {
-                    var fullPath = Settings.Value.Dota2FolderPath + client.LocalPath;
-                    if (Settings.Value.Backup)
-                    {
-                        _logger?.LogInformation($"Backing up {client.DisplayName}.");
-                        await _backupManager.CreateBackupAsync(fullPath,
-                            $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
-                    }
+                    _logger?.LogInformation($"Backing up {client.DisplayName}.");
+                    await _backupManager.CreateBackupAsync(fullPath,
+                        $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+                }
 
-                    if (client.CurrentDistance != client.Distance)
-                    {
-                        _logger?.LogInformation($"Patching {client.DisplayName}, distance {client.Distance}.");
-                        await _distancePatcher.SetAsync(fullPath, client.Distance, Settings.Value.Patterns);
+                if (client.CurrentDistance != client.Distance)
+                {
+                    _logger?.LogInformation($"Patching {client.DisplayName}, distance {client.Distance}.");
+                    await _distancePatcher.SetAsync(fullPath, client.Distance, Settings.Value.Patterns);
 
-                        client.CurrentDistance = client.Distance;
-                    }
-                });
-
-                tasks.Add(task);
-            }
-
-            await Task.WhenAll(tasks);
+                    client.CurrentDistance = client.Distance;
+                }
+            });
         }
     }
 }

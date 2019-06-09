@@ -3,12 +3,10 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using Async.IO;
 using Async.IO.Abstractions;
 using Dota2.DistanceChanger.Core.Abstractions;
 using Dota2.DistanceChanger.Core.Models;
 using DynamicData.Binding;
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -17,6 +15,7 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
     public class SettingsManager : ISettingsManager<Settings>
     {
         private readonly IAsyncFile _asyncFile;
+        private readonly IDotaLocation _dotaLocation;
 
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -27,9 +26,10 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
             Formatting = Formatting.Indented
         };
 
-        public SettingsManager(IAsyncFile asyncFile)
+        public SettingsManager(IAsyncFile asyncFile, IDotaLocation dotaLocation)
         {
             _asyncFile = asyncFile;
+            _dotaLocation = dotaLocation;
         }
 
         public string FilePath { get; internal set; } = "settings.json";
@@ -45,7 +45,7 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
                         if (TryDeserializeObject<Settings>(result, out var settings))
                         {
                             if (string.IsNullOrWhiteSpace(settings.Dota2FolderPath))
-                                settings.Dota2FolderPath = GetDotaInstallLocation();
+                                settings.Dota2FolderPath = await _dotaLocation.GetAsync();
 
                             return settings;
                         }
@@ -81,6 +81,11 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 
             var patterns = new ObservableCollectionExtended<byte[]>
             {
+                new byte[] //dota_camera_distance_min
+                {
+                    0x64, 0x6F, 0x74, 0x61, 0x5F, 0x63, 0x61, 0x6D, 0x65, 0x72, 0x61, 0x5F, 0x64, 0x69, 0x73, 0x74,
+                    0x61, 0x6E, 0x63, 0x65, 0x5F, 0x6D, 0x69, 0x6E, 0x00
+                },
                 new byte[] //dota_camera_distance
                 {
                     0x64, 0x6F, 0x74, 0x61, 0x5F, 0x63, 0x61, 0x6D, 0x65, 0x72, 0x61, 0x5F, 0x64, 0x69, 0x73, 0x74,
@@ -104,6 +109,7 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
                 Backup = true,
                 Clients = clients,
                 DarkMode = true,
+                Dota2FolderPath = await _dotaLocation.GetAsync(),
                 Patterns = patterns
             };
 
@@ -124,15 +130,6 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
                 result = default;
                 return false;
             }
-        }
-
-        private string GetDotaInstallLocation()
-        {
-            var key = Registry.LocalMachine.OpenSubKey(
-                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 570");
-
-            var value = key?.GetValue("InstallLocation");
-            return value?.ToString();
         }
     }
 }
