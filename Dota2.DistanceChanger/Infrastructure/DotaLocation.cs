@@ -6,13 +6,14 @@ namespace Dota2.DistanceChanger.Infrastructure
 {
     public class DotaLocation : IDotaLocation
     {
-        public async Task<string> GetAsync()
+        public Task<string> GetAsync()
         {
             var key = Registry.LocalMachine.OpenSubKey(
                 @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 570");
 
             var value = key?.GetValue("InstallLocation");
-            return value?.ToString();
+
+            return Task.FromResult(value?.ToString());
         }
     }
 }

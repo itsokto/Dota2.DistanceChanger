@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,51 +12,48 @@ namespace Dota.Patcher.Core
     public class DistancePatcher : IDistancePatcher
     {
         private readonly IAsyncFile _asyncFile;
-        private readonly IClientDistance _clientDistanceFinder;
+        private readonly IClientDistance _clientDistance;
 
-        public DistancePatcher(IAsyncFile asyncFile, IClientDistance clientDistanceFinder)
+        public DistancePatcher(IAsyncFile asyncFile, IClientDistance clientDistance)
         {
             _asyncFile = asyncFile;
-            _clientDistanceFinder = clientDistanceFinder;
+            _clientDistance = clientDistance;
         }
 
         public async Task SetAsync(string path, string distance, IEnumerable<byte[]> patterns)
         {
-            var result = await GetAsync(path, patterns);
+            var searchResults = await GetAsync(path, patterns);
 
-            await SetAsync(path, distance, result.Select(x => x.Offset));
+            if (!searchResults.Any())
+            {
+                throw new InvalidOperationException("No entry was found.");
+            }
+
+            if (searchResults.Count() > 1)
+            {
+                throw new IndexOutOfRangeException("More than one entry was found.");
+            }
+
+            await SetAsync(path, distance, searchResults.FirstOrDefault().Offset);
         }
 
-        public async Task SetAsync(string path, string distance, IEnumerable<int> offsets)
+        public async Task SetAsync(string path, string distance, int offset)
         {
-            var encodedDistance = Encoding.Default.GetBytes(distance);
-            foreach (var offset in offsets)
-                await _asyncFile.WriteBytesAsync(path, encodedDistance, offset);
-        }
+            var encodedDistance = Encoding.UTF8.GetBytes(distance);
 
-        public Task SetAsync(string path, string distance, int offset)
-        {
-            return SetAsync(path, distance, new[] {offset});
+            await _asyncFile.WriteBytesAsync(path, encodedDistance, offset);
         }
 
         public async Task<IEnumerable<SearchResult<string>>> GetAsync(string path, IEnumerable<byte[]> patterns)
         {
             var buffer = await _asyncFile.ReadBytesAsync(path);
-            var dictionary = _clientDistanceFinder.Find(buffer, patterns);
-            return dictionary;
-        }
-
-        public async Task<IEnumerable<SearchResult<string>>> GetAsync(string path, IEnumerable<int> offsets)
-        {
-            var buffer = await _asyncFile.ReadBytesAsync(path);
-            var dictionary = _clientDistanceFinder.Find(buffer, offsets);
-            return dictionary;
+            return _clientDistance.Get(buffer, patterns);
         }
 
         public async Task<string> GetAsync(string path, int offset)
         {
             var buffer = await _asyncFile.ReadBytesAsync(path);
-            return _clientDistanceFinder.Find(buffer, offset);
+            return _clientDistance.Get(buffer, offset);
         }
     }
 }

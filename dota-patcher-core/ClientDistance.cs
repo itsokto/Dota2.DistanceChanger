@@ -13,52 +13,38 @@ namespace Dota.Patcher.Core
         private readonly Regex _regex =
             new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
-        public IEnumerable<SearchResult<string>> Find(byte[] array, IEnumerable<byte[]> patterns)
+        public IEnumerable<SearchResult<string>> Get(byte[] array, IEnumerable<byte[]> patterns)
         {
             foreach (var pattern in patterns)
             {
                 var index = IndexOf(array, pattern);
                 if (index >= 0)
                 {
-                    var (result, offset, distance) =
+                    var (result, offsetInRange, distance) =
                         GetDistanceFromBytesInRange(array, index - 12, pattern.Length + 24);
 
                     if (!result) continue;
 
-                    var realOffset = index + offset - 12;
+                    var offset = index + offsetInRange - 12;
 
                     yield return new SearchResult<string>
                     {
-                        Offset = realOffset,
+                        Offset = offset,
                         Value = distance
                     };
                 }
             }
         }
 
-        public IEnumerable<SearchResult<string>> Find(byte[] array, byte[] pattern)
+        public IEnumerable<SearchResult<string>> Get(byte[] array, byte[] pattern)
         {
-            return Find(array, new[] {pattern});
+            return Get(array, new[] {pattern});
         }
 
-        public IEnumerable<SearchResult<string>> Find(byte[] array, IEnumerable<int> offsets)
+        public string Get(byte[] array, int offset)
         {
-            foreach (var offset in offsets)
-            {
-                var (result, _, distance) = GetDistanceFromBytesInRange(array, offset, 4);
-                if (!result) continue;
-
-                yield return new SearchResult<string>
-                {
-                    Offset = offset,
-                    Value = distance
-                };
-            }
-        }
-
-        public string Find(byte[] array, int offset)
-        {
-            return Find(array, new[] {offset}).FirstOrDefault()?.Value;
+            var (_, _, distance) = GetDistanceFromBytesInRange(array, offset, 4);
+            return distance;
         }
 
         private static int IndexOf(byte[] value, byte[] pattern)
