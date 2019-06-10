@@ -11,9 +11,9 @@ namespace Dota.Patcher.Core
     public class DistancePatcher : IDistancePatcher
     {
         private readonly IAsyncFile _asyncFile;
-        private readonly IClientDistanceFinder _clientDistanceFinder;
+        private readonly IClientDistance _clientDistanceFinder;
 
-        public DistancePatcher(IAsyncFile asyncFile, IClientDistanceFinder clientDistanceFinder)
+        public DistancePatcher(IAsyncFile asyncFile, IClientDistance clientDistanceFinder)
         {
             _asyncFile = asyncFile;
             _clientDistanceFinder = clientDistanceFinder;

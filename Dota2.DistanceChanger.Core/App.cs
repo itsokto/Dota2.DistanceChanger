@@ -19,7 +19,7 @@ namespace Dota2.DistanceChanger.Core
         {
             Mvx.IoCProvider.RegisterType<ISettingsManager<Settings>, SettingsManager>();
             Mvx.IoCProvider.RegisterType<IAsyncFile, AsyncFile>();
-            Mvx.IoCProvider.RegisterType<IClientDistanceFinder, ClientDistanceFinder>();
+            Mvx.IoCProvider.RegisterType<IClientDistance, ClientDistance>();
             Mvx.IoCProvider.RegisterType<IBackupManager, BackupManager>();
             Mvx.IoCProvider.RegisterType<IDistancePatcher, DistancePatcher>();
 

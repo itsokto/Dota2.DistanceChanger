@@ -8,7 +8,7 @@ using Dota.Patcher.Core.Models;
 
 namespace Dota.Patcher.Core
 {
-    public class ClientDistanceFinder : IClientDistanceFinder
+    public class ClientDistance : IClientDistance
     {
         private readonly Regex _regex =
             new Regex(@"(?<=\0)([\d]{4,})(?=\0)", RegexOptions.Compiled | RegexOptions.RightToLeft);
