@@ -4,9 +4,9 @@ using ReactiveUI;
 
 namespace Dota2.DistanceChanger.Views
 {
-	public partial class RootWindow
+	public partial class RootView
 	{
-		public RootWindow()
+		public RootView()
 		{
 			InitializeComponent();
 
