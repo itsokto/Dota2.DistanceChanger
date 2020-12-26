@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Async.IO.Abstractions;
 using Dota2.DistanceChanger.Core.Abstractions;
 
@@ -16,7 +15,10 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 
         public async Task CreateBackupAsync(string source, string destination)
         {
-            if (File.Exists(source)) await _asyncFile.CopyFileAsync(source, destination);
+            if (_asyncFile.Exists(source))
+            {
+                await _asyncFile.CopyFileAsync(source, destination);
+            }
         }
     }
 }

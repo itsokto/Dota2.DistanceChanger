@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dota2.DistanceChanger", "Dota2.DistanceChanger\Dota2.DistanceChanger.csproj", "{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dota2.DistanceChanger", "Dota2.DistanceChanger\Dota2.DistanceChanger.csproj", "{DA06F1C5-51CD-418B-82CE-C83BCED97CC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dota2.DistanceChanger.Core", "Dota2.DistanceChanger.Core\Dota2.DistanceChanger.Core.csproj", "{49F32D42-3F60-4BDD-B593-4EB98C64926A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dota2.DistanceChanger.Core", "Dota2.DistanceChanger.Core\Dota2.DistanceChanger.Core.csproj", "{49F32D42-3F60-4BDD-B593-4EB98C64926A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dota-patcher-core", "dota-patcher-core\dota-patcher-core.csproj", "{3876082D-B62B-485D-9ECC-6D0B3476C793}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dota2.Patcher.Core", "Dota2.Patcher.Core\Dota2.Patcher.Core.csproj", "{3876082D-B62B-485D-9ECC-6D0B3476C793}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "async-file", "async-file\async-file.csproj", "{F1FBC7ED-2741-46FF-931F-A14CFD143FE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Async.IO", "Async.IO\Async.IO.csproj", "{F1FBC7ED-2741-46FF-931F-A14CFD143FE1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9A3B8871-57EB-4486-9701-B1EF5253503A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

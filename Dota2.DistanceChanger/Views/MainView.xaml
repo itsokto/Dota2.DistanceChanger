@@ -1,50 +1,51 @@
-<views:MvxWpfView x:Class="Dota2.DistanceChanger.Views.MainView"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
-                  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                  xmlns:viewModels="clr-namespace:Dota2.DistanceChanger.Core.ViewModels;assembly=Dota2.DistanceChanger.Core"
-                  xmlns:infrastructure="clr-namespace:Dota2.DistanceChanger.Infrastructure"
-                  mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainViewModel }">
-    <views:MvxWpfView.Resources>
+<reactiveUi:ReactiveUserControl x:TypeArguments="viewModels:MainViewViewModel"
+                                x:Class="Dota2.DistanceChanger.Views.MainView"
+                                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                                xmlns:viewModels="clr-namespace:Dota2.DistanceChanger.Core.ViewModels;assembly=Dota2.DistanceChanger.Core"
+                                xmlns:reactiveUi="http://reactiveui.net"
+                                xmlns:platform="clr-namespace:Dota2.DistanceChanger.Platform"
+                                mc:Ignorable="d">
+    <UserControl.Resources>
         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFilledTextFieldTextBox}">
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="8" />
         </Style>
         <Style x:Key="DotaMaterialButton" TargetType="{x:Type Button}"
                BasedOn="{StaticResource MaterialDesignRaisedButton}">
-            <Setter Property="Margin" Value="5" />
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="Height" Value="46" />
-            <Setter Property="Width" Value="125" />
+            <Setter Property="FontStretch" Value="UltraExpanded" />
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="MinWidth" Value="112"/>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect ShadowDepth="0" BlurRadius="25" Opacity=".4" Color="{StaticResource Primary500}" />
+                    <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity=".4" Color="{StaticResource Primary500}" />
                 </Setter.Value>
             </Setter>
             <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth0" />
         </Style>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DotaMaterialButton}" />
-    </views:MvxWpfView.Resources>
+    </UserControl.Resources>
 
-    <Grid Margin="15" MaxWidth="800">
+    <Grid Margin="16" MaxWidth="800">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- Margin -->
-            <RowDefinition Height="30" />
+            <!-- Spacing -->
+            <RowDefinition Height="32" />
             <RowDefinition Height="Auto" />
-            <!-- Margin -->
-            <RowDefinition Height="30" />
+            <!-- Spacing -->
+            <RowDefinition Height="32" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <materialDesign:Snackbar Grid.ColumnSpan="3" Grid.RowSpan="7" MessageQueue="{infrastructure:UserDialog}" />
+        <materialDesign:Snackbar  Grid.RowSpan="5" MessageQueue="{platform:UserDialog}" />
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <!-- Margin -->
-                <ColumnDefinition Width="15" />
+                <!-- Spacing -->
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -54,86 +55,64 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"
                        FontSize="24"
-                       Text="Путь до dota 2 beta:"
+                       Text="Path to dota 2 beta folder:"
                        TextWrapping="Wrap" />
 
-            <!-- Path to the Dota 2 folder -->
-            <TextBlock Grid.Row="1" Grid.Column="1"
+            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="Dota2FolderPathTxtB"
                        VerticalAlignment="Center"
-                       Text="{Binding Settings.Value.Dota2FolderPath}"
                        TextWrapping="Wrap" />
 
-            <!-- Folder selection button -->
-            <Button Grid.Row="1" Grid.Column="2"
-                    Visibility="Hidden"
-                    Content="Select">
-                <Button.Style>
-                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource DotaMaterialButton}">
-                        <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Settings.Value.Dota2FolderPath}" Value="" />
-                                    <Condition Binding="{Binding Settings.Value.Dota2FolderPath}" Value="{x:Null}" />
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Button.Visibility" Value="Visible" />
-                            </MultiDataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-
+            <Button Grid.Row="1" Grid.Column="2" x:Name="BrowseDota2FolderBtn" Content="..." />
         </Grid>
 
         <GroupBox Grid.Row="2"
-                  Style="{StaticResource MaterialDesignCardGroupBox}"
-                  materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                  materialDesign:ShadowAssist.ShadowDepth="Depth2"
                   BorderThickness="0"
                   Padding="16"
-                  Header="Clients">
-            <ItemsControl ItemsSource="{Binding Settings.Value.Clients}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBox Text="{Binding Distance, UpdateSourceTrigger=PropertyChanged}"
-                                 materialDesign:HintAssist.Hint="{Binding DisplayName}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                  FontSize="16"
+                  Header="Clients"
+                  FontStretch="UltraExpanded">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Row="0" Grid.Column="0" x:Name="X32Client" />
+
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="X64Client" />
+            </Grid>
+
         </GroupBox>
 
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <!-- Spacing -->
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
-                    Content="Patch"
-                    Command="{Binding PatchCommand}" />
+            <Button Grid.Column="0" x:Name="PatchButton"
+                    Content="Apply" />
 
-            <CheckBox Grid.Column="1"
-                      Content="Backup"
-                      IsChecked="{Binding Settings.Value.Backup}" />
+            <CheckBox Grid.Column="2" x:Name="BackupChkb"
+                      Content="Backup" />
 
-            <Grid Grid.Column="2"
-                  HorizontalAlignment="Right">
+            <Grid Grid.Column="3" HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="16" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="16" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <materialDesign:PackIcon Kind="Brightness2" VerticalAlignment="Center"
-                                         Width="auto" Height="25"
+                                         Width="auto" Height="26"
                                          RenderTransformOrigin="0.5 0.5">
                     <materialDesign:PackIcon.RenderTransform>
                         <ScaleTransform ScaleX="-1" />
@@ -142,13 +121,10 @@
 
                 <TextBlock Grid.Column="2" Text="Dark mode" VerticalAlignment="Center" />
 
-                <ToggleButton Grid.Column="4"
-                              IsChecked="{Binding Settings.Value.DarkMode}"
-                              Command="{Binding ToggleDarkModeCommand}"
-                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />
+                <ToggleButton Grid.Column="4" x:Name="DarkModeTgb" VerticalAlignment="Center" />
             </Grid>
 
         </Grid>
     </Grid>
 
-</views:MvxWpfView>
+</reactiveUi:ReactiveUserControl>

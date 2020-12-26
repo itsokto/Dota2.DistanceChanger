@@ -1,20 +1,29 @@
-using System.ComponentModel;
 using DynamicData.Binding;
+using Newtonsoft.Json;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace Dota2.DistanceChanger.Core.Models
 {
-    public class Settings : INotifyPropertyChanged
-    {
-        public bool Backup { get; set; }
+	[JsonObject(MemberSerialization.OptOut)]
+	public class Settings : ReactiveObject
+	{
+		[Reactive]
+		public bool Backup { get; set; }
 
-        public ObservableCollectionExtended<Client> Clients { get; set; }
+		[Reactive]
+		public Client X32Client { get; set; }
 
-        public bool DarkMode { get; set; }
+		[Reactive]
+		public Client X64Client { get; set; }
 
-        public string Dota2FolderPath { get; set; }
+		[Reactive]
+		public bool DarkMode { get; set; }
 
-        public ObservableCollectionExtended<byte[]> Patterns { get; set; }
+		[Reactive]
+		public string Dota2FolderPath { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-    }
+		[Reactive]
+		public ObservableCollectionExtended<byte[]> Patterns { get; set; }
+	}
 }
