@@ -6,10 +6,10 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Dota2.DistanceChanger.Core.Abstractions;
 using Dota2.DistanceChanger.Core.Models;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using ReactiveCommand = ReactiveUI.ReactiveCommand;
 
 namespace Dota2.DistanceChanger.Core.ViewModels

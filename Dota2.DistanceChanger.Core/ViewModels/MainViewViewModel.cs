@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Dota2.DistanceChanger.Core.Abstractions;
 using Dota2.DistanceChanger.Core.Models;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using Reactive.Bindings.Extensions;
 using ReactiveUI;
 using ReactiveCommand = ReactiveUI.ReactiveCommand;

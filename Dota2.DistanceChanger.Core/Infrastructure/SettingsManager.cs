@@ -2,6 +2,7 @@ using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Dota2.DistanceChanger.Core.Abstractions;
 using Dota2.DistanceChanger.Core.Models;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using DynamicData.Binding;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

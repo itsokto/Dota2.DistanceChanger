@@ -12,12 +12,12 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 	{
 		private readonly IBackupManager _backupManager;
 
-		private readonly IDistancePatcher _distancePatcher;
+		private readonly IDotaClientDistance _dotaClientDistance;
 
-		public DotaClientDistancePatcher(IBackupManager backupManager, IDistancePatcher distancePatcher)
+		public DotaClientDistancePatcher(IBackupManager backupManager, IDotaClientDistance dotaClientDistance)
 		{
 			_backupManager = backupManager;
-			_distancePatcher = distancePatcher;
+			_dotaClientDistance = dotaClientDistance;
 		}
 
 		public Task PatchAsync(Settings settings)
@@ -31,7 +31,7 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 					await _backupManager.CreateBackupAsync(fullPath, $"{fullPath}.back{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
 				}
 
-				await _distancePatcher.SetAsync(fullPath, client.Distance.Value, client.Distance.Offset);
+				await _dotaClientDistance.SetAsync(fullPath, client.Distance.Value, client.Distance.Offset);
 			});
 		}
 	}

@@ -33,10 +33,10 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 			ReactiveMvvm.IoC.Register<IBackupManager, BackupManager>(Reuse.Singleton);
 			ReactiveMvvm.IoC.Register<ISettingsManager<Settings>, SettingsManager>(Reuse.Singleton);
 			
-			ReactiveMvvm.IoC.Register<IClientDistanceParser, ClientDistanceParser>(Reuse.Singleton);
+			ReactiveMvvm.IoC.Register<IDotaClientDistanceParser, DotaClientDistanceParser>(Reuse.Singleton);
 			ReactiveMvvm.IoC.Register<IDotaClientDistanceLoader, DotaClientDistanceLoader>(Reuse.Singleton);
 			ReactiveMvvm.IoC.Register<IDotaClientDistancePatcher, DotaClientDistancePatcher>(Reuse.Singleton);
-			ReactiveMvvm.IoC.Register<IDistancePatcher, DistancePatcher>(Reuse.Singleton);
+			ReactiveMvvm.IoC.Register<IDotaClientDistance, DotaClientDistance>(Reuse.Singleton);
 
 			ReactiveMvvm.IoC.RegisterInstance<IScreen>(this);
 			ReactiveMvvm.IoC.Register<MainViewViewModel>(Reuse.Singleton);

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Dota2.DistanceChanger.Core;
-using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using Dota2.DistanceChanger.Core.ViewModels;
 using Dota2.DistanceChanger.Platform;
 using Dota2.DistanceChanger.Views;

@@ -3,7 +3,7 @@ using Dota2.Patcher.Core.Models;
 
 namespace Dota2.Patcher.Core.Abstractions
 {
-	public interface IClientDistanceParser
+	public interface IDotaClientDistanceParser
 	{
 		IEnumerable<SearchResult<int>> Get(byte[] array, IEnumerable<byte[]> patterns);
 

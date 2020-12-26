@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Platforms;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using Microsoft.Win32;
 
 namespace Dota2.DistanceChanger.Platform

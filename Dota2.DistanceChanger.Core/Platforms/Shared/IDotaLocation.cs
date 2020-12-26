@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Dota2.DistanceChanger.Core.Abstractions
+namespace Dota2.DistanceChanger.Core.Platforms.Shared
 {
 	public interface IDotaLocation
 	{

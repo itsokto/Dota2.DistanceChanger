@@ -1,5 +1,5 @@
 using System;
-using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using MaterialDesignThemes.Wpf;
 
 namespace Dota2.DistanceChanger.Platform

@@ -12,12 +12,12 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 {
     public class DotaClientDistanceLoader : IDotaClientDistanceLoader
     {
-        private readonly IDistancePatcher _distancePatcher;
+        private readonly IDotaClientDistance _dotaClientDistance;
         private readonly IAsyncFile _asyncFile;
 
-        public DotaClientDistanceLoader(IDistancePatcher distancePatcher, IAsyncFile asyncFile)
+        public DotaClientDistanceLoader(IDotaClientDistance dotaClientDistance, IAsyncFile asyncFile)
         {
-            _distancePatcher = distancePatcher;
+            _dotaClientDistance = dotaClientDistance;
             _asyncFile = asyncFile;
         }
 
@@ -36,13 +36,13 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 
                 if (client.Distance?.Offset > 0)
                 {
-                    searchResult = await _distancePatcher.GetAsync(fullPath, client.Distance.Offset)
+                    searchResult = await _dotaClientDistance.GetAsync(fullPath, client.Distance.Offset)
                         .ConfigureAwait(false);
                 }
 
                 if (searchResult.Offset <= 0)
                 {
-                    var searchResults = await _distancePatcher.GetAsync(fullPath, settings.Patterns)
+                    var searchResults = await _dotaClientDistance.GetAsync(fullPath, settings.Patterns)
                         .ConfigureAwait(false);
 
                     //TODO: handle case when nothing was found

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Markup;
-using Dota2.DistanceChanger.Core.Abstractions;
+using Dota2.DistanceChanger.Core.Platforms.Shared;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
