@@ -8,11 +8,11 @@ using Dota2.Patcher.Core.Models;
 
 namespace Dota2.Patcher.Core
 {
-	public class ClientDistance : IClientDistance
+	public class ClientDistanceParser : IClientDistanceParser
 	{
 		private readonly Regex _regex;
 
-		public ClientDistance()
+		public ClientDistanceParser()
 		{
 			_regex = new Regex(@"([\d]{4,})", RegexOptions.Compiled | RegexOptions.RightToLeft);
 		}

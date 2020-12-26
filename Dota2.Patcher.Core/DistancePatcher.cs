@@ -13,12 +13,12 @@ namespace Dota2.Patcher.Core
 	{
 		private readonly IAsyncFile _asyncFile;
 
-		private readonly IClientDistance _clientDistance;
+		private readonly IClientDistanceParser _clientDistanceParser;
 
-		public DistancePatcher(IAsyncFile asyncFile, IClientDistance clientDistance)
+		public DistancePatcher(IAsyncFile asyncFile, IClientDistanceParser clientDistanceParser)
 		{
 			_asyncFile = asyncFile;
-			_clientDistance = clientDistance;
+			_clientDistanceParser = clientDistanceParser;
 		}
 
 		public async Task SetAsync(string path, int distance, IEnumerable<byte[]> patterns)
@@ -48,13 +48,13 @@ namespace Dota2.Patcher.Core
 		public async Task<IEnumerable<SearchResult<int>>> GetAsync(string path, IEnumerable<byte[]> patterns)
 		{
 			var buffer = await _asyncFile.ReadBytesAsync(path).ConfigureAwait(false);
-			return _clientDistance.Get(buffer, patterns);
+			return _clientDistanceParser.Get(buffer, patterns);
 		}
 
 		public async Task<SearchResult<int>> GetAsync(string path, int offset)
 		{
 			var buffer = await _asyncFile.ReadBytesAsync(path, offset).ConfigureAwait(false);
-			return _clientDistance.Get(buffer, offset);
+			return _clientDistanceParser.Get(buffer, offset);
 		}
 	}
 }
