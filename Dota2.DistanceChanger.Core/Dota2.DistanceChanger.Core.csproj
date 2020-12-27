@@ -11,8 +11,8 @@
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="ReactiveProperty" Version="7.5.1" />
-        <PackageReference Include="ReactiveUI" Version="13.0.1" />
-        <PackageReference Include="ReactiveUI.Fody" Version="13.0.1" />
+        <PackageReference Include="ReactiveUI" Version="13.0.27" />
+        <PackageReference Include="ReactiveUI.Fody" Version="13.0.27" />
         <PackageReference Include="Splat.DryIoc" Version="9.8.1" />
     </ItemGroup>
 
