@@ -41,10 +41,6 @@ namespace Dota2.DistanceChanger.Views
 				this.Bind(ViewModel, model => model.SettingsViewModel.Settings.Value.Backup, view => view.BackupChkb.IsChecked)
 					.DisposeWith(disposable);
 
-				this.BindCommand(ViewModel, model => model.SettingsViewModel.ToggleDarkModeCommand, view => view.DarkModeTgb,
-								 model => model.SettingsViewModel.Settings.Value.DarkMode)
-					.DisposeWith(disposable);
-
 				this.BindCommand(ViewModel, model => model.PatchCommand, view => view.PatchButton,
 								 model => model.SettingsViewModel.Settings.Value)
 					.DisposeWith(disposable);
