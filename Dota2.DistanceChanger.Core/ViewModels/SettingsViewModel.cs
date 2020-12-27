@@ -34,9 +34,13 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
             BrowseDota2FolderCommand = ReactiveCommand.CreateFromTask(OpenFolderDialog);
 
+            BrowseDota2FolderCommand.Where(value => !string.IsNullOrWhiteSpace(value))
+                .SubscribeOnUIDispatcher()
+                .Subscribe(value => Settings.Value.Dota2FolderPath = value);
+
             this.WhenAnyValue(vm => vm.Settings.Value.DarkMode)
                 .InvokeCommand(ToggleDarkModeCommand);
-            
+
             this.WhenAnyValue(vm => vm.Settings.Value.Dota2FolderPath)
                 .Where(value => !string.IsNullOrWhiteSpace(value))
                 .Select(_ => Settings.Value)
@@ -46,13 +50,14 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
         public ReactiveProperty<Settings> Settings { get; }
 
-        public ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
-
         public ReactiveCommand<Unit, string> BrowseDota2FolderCommand { get; }
 
         public ReactiveCommand<Settings, Unit> SaveSettingsCommand { get; }
 
         private ReactiveCommand<Settings, Unit> LoadDistanceCommand { get; }
+
+        private ReactiveCommand<bool, Unit> ToggleDarkModeCommand { get; }
+
 
         private async Task<string> OpenFolderDialog()
         {
@@ -65,9 +70,7 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
             var directoryInfo = new DirectoryInfo(dotaFolder);
 
-            var result = directoryInfo.Name == "dota 2 beta" ? dotaFolder : string.Empty;
-            Settings.Value.Dota2FolderPath = result;
-            return directoryInfo.Name == "dota 2 beta" ? dotaFolder : string.Empty;
+            return directoryInfo.Name == "dota 2 beta" ? directoryInfo.FullName : string.Empty;
         }
     }
 }

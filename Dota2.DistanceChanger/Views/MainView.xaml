@@ -10,15 +10,16 @@
                                 xmlns:platform="clr-namespace:Dota2.DistanceChanger.Platform"
                                 mc:Ignorable="d">
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFilledTextFieldTextBox}">
+        <Style x:Key="DistanceTextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignFilledTextFieldTextBox}">
             <Setter Property="Margin" Value="8" />
         </Style>
+
         <Style x:Key="DotaMaterialButton" TargetType="{x:Type Button}"
                BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontStretch" Value="UltraExpanded" />
-            <Setter Property="MinHeight" Value="48"/>
-            <Setter Property="MinWidth" Value="112"/>
+            <Setter Property="MinHeight" Value="48" />
+            <Setter Property="MinWidth" Value="112" />
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity=".4" Color="{StaticResource Primary500}" />
@@ -40,12 +41,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <materialDesign:Snackbar  Grid.RowSpan="5" MessageQueue="{platform:UserDialog}" />
+        <materialDesign:Snackbar Grid.RowSpan="5" MessageQueue="{platform:UserDialog}" />
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <!-- Spacing -->
-                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -60,11 +59,12 @@
                        Text="Path to dota 2 beta folder:"
                        TextWrapping="Wrap" />
 
-            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="Dota2FolderPathTxtB"
+            <TextBlock Grid.Row="1" Grid.Column="0" x:Name="Dota2FolderPathTextBlock"
+                       Margin="32 0"
                        VerticalAlignment="Center"
                        TextWrapping="Wrap" />
 
-            <Button Grid.Row="1" Grid.Column="2" x:Name="BrowseDota2FolderBtn" Content="..." />
+            <Button Grid.Row="1" Grid.Column="1" x:Name="BrowseDota2FolderButton" Content="..." />
         </Grid>
 
         <GroupBox Grid.Row="2"
@@ -80,9 +80,9 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" x:Name="X32Client" />
+                <TextBox Grid.Row="0" Grid.Column="0" x:Name="X32Client" Style="{StaticResource DistanceTextBox}" MaxLength="4" />
 
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="X64Client" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="X64Client" Style="{StaticResource DistanceTextBox}" MaxLength="4" />
             </Grid>
 
         </GroupBox>
@@ -99,7 +99,7 @@
             <Button Grid.Column="0" x:Name="PatchButton"
                     Content="Apply" />
 
-            <CheckBox Grid.Column="2" x:Name="BackupChkb"
+            <CheckBox Grid.Column="2" x:Name="BackupCheckBox"
                       Content="Backup" />
 
             <Grid Grid.Column="3" HorizontalAlignment="Right">
