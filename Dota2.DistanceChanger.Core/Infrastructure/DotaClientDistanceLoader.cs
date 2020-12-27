@@ -36,21 +36,19 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 
                 if (client.Distance?.Offset > 0)
                 {
-                    searchResult = await _dotaClientDistance.GetAsync(fullPath, client.Distance.Offset)
-                        .ConfigureAwait(false);
+                    searchResult = await _dotaClientDistance.GetAsync(fullPath, client.Distance.Offset);
                 }
 
                 if (searchResult.Offset <= 0)
                 {
-                    var searchResults = await _dotaClientDistance.GetAsync(fullPath, settings.Patterns)
-                        .ConfigureAwait(false);
+                    var searchResults = await _dotaClientDistance.GetAsync(fullPath, settings.Patterns);
 
                     //TODO: handle case when nothing was found
                     searchResult = searchResults.FirstOrDefault(x => x.Offset > 0);
                 }
 
                 client.Distance = searchResult;
-            }).ConfigureAwait(false);
+            });
 
             return settings;
         }

@@ -34,23 +34,14 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
             BrowseDota2FolderCommand = ReactiveCommand.CreateFromTask(OpenFolderDialog);
 
-            BrowseDota2FolderCommand.Where(result => !string.IsNullOrWhiteSpace(result))
-                .Select(_ => Settings.Value)
-                .InvokeCommand(LoadDistanceCommand);
-
-            BrowseDota2FolderCommand.SubscribeOnUIDispatcher().Subscribe(result =>
-            {
-                if (string.IsNullOrWhiteSpace(result))
-                {
-                    userDialogs.Alert("Incorrect path!");
-                    return;
-                }
-
-                Settings.Value.Dota2FolderPath = result;
-            });
-
             this.WhenAnyValue(vm => vm.Settings.Value.DarkMode)
                 .InvokeCommand(ToggleDarkModeCommand);
+            
+            this.WhenAnyValue(vm => vm.Settings.Value.Dota2FolderPath)
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(_ => Settings.Value)
+                .ObserveOnUIDispatcher()
+                .InvokeCommand(LoadDistanceCommand);
         }
 
         public ReactiveProperty<Settings> Settings { get; }
@@ -74,6 +65,8 @@ namespace Dota2.DistanceChanger.Core.ViewModels
 
             var directoryInfo = new DirectoryInfo(dotaFolder);
 
+            var result = directoryInfo.Name == "dota 2 beta" ? dotaFolder : string.Empty;
+            Settings.Value.Dota2FolderPath = result;
             return directoryInfo.Name == "dota 2 beta" ? dotaFolder : string.Empty;
         }
     }
