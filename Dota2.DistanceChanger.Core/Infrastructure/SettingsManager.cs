@@ -50,13 +50,11 @@ namespace Dota2.DistanceChanger.Core.Infrastructure
 			return settings;
 		}
 
-		public async Task<bool> SaveAsync(Settings settings)
+		public async Task SaveAsync(Settings settings)
 		{
 			var result = JsonConvert.SerializeObject(settings, _jsonSerializerSettings);
 
 			await _fileSystem.File.WriteAllTextAsync(FilePath, result).ConfigureAwait(false);
-
-			return true;
 		}
 
 		private async Task<Settings> CreateDefaultSettings()

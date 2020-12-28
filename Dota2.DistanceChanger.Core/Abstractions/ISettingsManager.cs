@@ -6,6 +6,6 @@ namespace Dota2.DistanceChanger.Core.Abstractions
 	{
 		Task<T> LoadAsync();
 
-		Task<bool> SaveAsync(T settings);
+		Task SaveAsync(T settings);
 	}
 }
