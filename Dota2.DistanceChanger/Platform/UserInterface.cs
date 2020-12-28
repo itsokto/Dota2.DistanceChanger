@@ -13,8 +13,8 @@ namespace Dota2.DistanceChanger.Platform
 			var theme = PaletteHelper.GetTheme();
 
 			theme.SetBaseTheme(enable
-								   ? Theme.Dark
-								   : Theme.Light);
+				? Theme.Dark
+				: Theme.Light);
 
 			PaletteHelper.SetTheme(theme);
 		}

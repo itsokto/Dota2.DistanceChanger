@@ -19,15 +19,15 @@ namespace Async.IO
 		private Stream AsyncStreamForReading(string path)
 		{
 			return _fileSystem.FileStream.Create(path, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultBufferSize,
-												 FileOptions.Asynchronous | FileOptions.SequentialScan);
+				FileOptions.Asynchronous | FileOptions.SequentialScan);
 		}
 
 		private Stream AsyncStreamForWriting(string path, bool append)
 		{
 			return _fileSystem.FileStream.Create(path, append
-													 ? FileMode.Append
-													 : FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read, DefaultBufferSize,
-												 FileOptions.Asynchronous | FileOptions.SequentialScan);
+					? FileMode.Append
+					: FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read, DefaultBufferSize,
+				FileOptions.Asynchronous | FileOptions.SequentialScan);
 		}
 
 		private StreamReader AsyncStreamReader(string path, Encoding encoding)

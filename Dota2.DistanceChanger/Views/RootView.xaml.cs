@@ -12,10 +12,7 @@ namespace Dota2.DistanceChanger.Views
 
 			ViewModel = new AppSetup();
 
-			this.WhenActivated(disposable =>
-			{
-				this.Bind(ViewModel, model => model.Router, window => window.RoutedViewHost.Router).DisposeWith(disposable);
-            });
+			this.WhenActivated(disposable => { this.Bind(ViewModel, model => model.Router, window => window.RoutedViewHost.Router).DisposeWith(disposable); });
 		}
 	}
 }
