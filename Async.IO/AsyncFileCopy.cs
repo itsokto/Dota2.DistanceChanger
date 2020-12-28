@@ -6,9 +6,11 @@ namespace Async.IO
 {
 	public partial class AsyncFile
 	{
+		private const int DefaultCopyBufferSize = 81920;
+
 		public Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken)
 		{
-			return CopyFileAsync(sourceFile, destinationFile, DefaultBufferSize, CancellationToken.None);
+			return CopyFileAsync(sourceFile, destinationFile, DefaultCopyBufferSize, CancellationToken.None);
 		}
 
 		public async Task CopyFileAsync(string sourceFile, string destinationFile, int bufferSize, CancellationToken cancellationToken)
